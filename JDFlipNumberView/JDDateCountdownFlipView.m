@@ -127,7 +127,7 @@ static CGFloat kFlipAnimationUpdateInterval = 0.5; // = 2 times per second
     currentX += firstSize.width;
     
     // check other numbers
-    CGSize nextSize;
+    CGSize nextSize = CGSizeZero;
     for (JDFlipNumberView* view in @[self.hourFlipNumberView, self.minuteFlipNumberView, self.secondFlipNumberView]) {
         currentX += margin;
         nextSize = CGSizeMake(digitWidth*2, size.height);

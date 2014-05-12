@@ -141,7 +141,7 @@
     currentX += firstSize.width;
     
     // check other numbers
-    CGSize nextSize;
+    CGSize nextSize = CGSizeZero;
     for (JDFlipNumberView* view in @[self.minuteFlipNumberView, self.secondFlipNumberView]) {
         if (!self.showsSeconds && view == self.secondFlipNumberView) continue;
         currentX += firstSize.width*self.relativeDigitMargin;

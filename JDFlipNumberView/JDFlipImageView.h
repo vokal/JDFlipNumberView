@@ -34,4 +34,8 @@ typedef NS_ENUM(NSInteger, JDFlipImageViewFlipDirection) {
                 duration:(CGFloat)duration
               completion:(JDFlipImageViewCompletionBlock)completion;
 
+- (void)prepareForManualSlideDirection:(JDFlipImageViewFlipDirection)direction
+                            completion:(JDFlipImageViewCompletionBlock)completion;
+- (void)slideToProgress:(CGFloat)progress;
+
 @end

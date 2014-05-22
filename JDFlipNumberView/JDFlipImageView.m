@@ -16,13 +16,15 @@ static NSString *const JDFlipImageAnimationKey = @"JDFlipImageAnimationKey";
 
 typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
 	JDFlipAnimationStateFirstHalf,
-	JDFlipAnimationStateSecondHalf
+	JDFlipAnimationStateSecondHalf,
+    JDFlipAnimationStateManualSlide
 };
 
 @interface JDFlipImageView ()
 
 @property (nonatomic, assign) BOOL upscalingAllowed;
 @property (nonatomic, assign) CGFloat animationDuration;
+@property (nonatomic, assign) CGFloat swipeProgress;
 @property (nonatomic, assign) JDFlipAnimationState animationState;
 @property (nonatomic, strong) NSArray *nextImages;
 
@@ -211,6 +213,43 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
     [self runAnimation];
 }
 
+- (void)prepareForManualSlideDirection:(JDFlipImageViewFlipDirection)direction
+                            completion:(JDFlipImageViewCompletionBlock)completion;
+{
+    self.animationState = JDFlipAnimationStateManualSlide;
+    self.flipDirection = direction;
+    self.completionBlock = completion;
+
+    [self.flipImageView.layer removeAllAnimations];
+
+    BOOL isTopDown = (direction == JDFlipImageViewFlipDirectionDown);
+
+    self.flipImageView.image   = isTopDown ? self.topImageView.image : self.bottomImageView.image;
+    self.topImageView.image	   = isTopDown ? self.nextImages[0] : self.topImageView.image;
+    self.bottomImageView.image = isTopDown ? self.bottomImageView.image : self.nextImages[1];
+
+    [self updateFlipViewFrame];
+
+    self.flipImageView.hidden = NO;
+}
+
+- (void)slideToProgress:(CGFloat)progress;
+{
+    if (self.animationState != JDFlipAnimationStateManualSlide) {
+        return;
+    }
+
+    if (progress > 0.5) {
+        self.animationState = JDFlipAnimationStateSecondHalf;
+        [self runAnimation];
+        return;
+    }
+    BOOL isTopDown = (self.flipDirection == JDFlipImageViewFlipDirectionDown);
+    CGFloat angle = isTopDown ? -M_PI_2 : M_PI_2;
+    angle *= progress;
+    self.flipImageView.layer.transform = CATransform3DMakeRotation(angle, 1, 0, 0);
+}
+
 #pragma mark -
 #pragma mark animation
 
@@ -236,11 +275,11 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
         self.flipImageView.image   = isTopDown ? self.topImageView.image : self.bottomImageView.image;
         self.topImageView.image	   = isTopDown ? self.nextImages[0] : self.topImageView.image;
         self.bottomImageView.image = isTopDown ? self.bottomImageView.image : self.nextImages[1];
-		
+
         animation.fromValue	= [NSValue valueWithCATransform3D:CATransform3DMakeRotation(0.0, 1, 0, 0)];
         animation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeRotation(isTopDown ? -M_PI_2 : M_PI_2, 1, 0, 0)];
 		animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-	} else {
+	} else if (self.animationState == JDFlipAnimationStateSecondHalf) {
 		// setup second animation half
         self.flipImageView.image = isTopDown ? self.nextImages[1] : self.nextImages[0];
         
@@ -271,7 +310,7 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
 		// do second animation step
 		self.animationState = JDFlipAnimationStateSecondHalf;
 		[self runAnimation];
-	} else {
+    } else {
 		// reset state
 		self.animationState = JDFlipAnimationStateFirstHalf;
 		
@@ -295,13 +334,14 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
             self.completionBlock = nil;
             block(YES);
         }
-	}
+    }
 }
 
 - (void)updateFlipViewFrame;
 {
     BOOL isTopDown = (self.flipDirection == JDFlipImageViewFlipDirectionDown);
     if ((isTopDown && self.animationState == JDFlipAnimationStateFirstHalf) ||
+        (isTopDown && self.animationState == JDFlipAnimationStateManualSlide) ||
         (!isTopDown && self.animationState == JDFlipAnimationStateSecondHalf)) {
 		self.flipImageView.layer.anchorPoint = CGPointMake(0.5, 1.0);
 		self.flipImageView.frame = self.topImageView.frame;

@@ -242,7 +242,7 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
         return;
     }
 
-    if (progress > 0.5) {
+    if (progress > 0.8) {
         self.animationState = JDFlipAnimationStateSecondHalf;
         [self runAnimation];
         return;

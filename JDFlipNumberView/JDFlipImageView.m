@@ -198,7 +198,7 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
     // update current images (in case animation isnt finished)
     self.topImageView.image = self.nextImages[0];
     self.bottomImageView.image = self.nextImages[1];
-    
+
     // remove any running animation
     [self.flipImageView.layer removeAnimationForKey:JDFlipImageAnimationKey];
     
@@ -214,8 +214,11 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
 }
 
 - (void)prepareForManualSlideDirection:(JDFlipImageViewFlipDirection)direction
+                             nextImage:(UIImage *)nextImage
                             completion:(JDFlipImageViewCompletionBlock)completion;
 {
+//    _image = nextImage;
+
     self.animationState = JDFlipAnimationStateManualSlide;
     self.flipDirection = direction;
     self.completionBlock = completion;

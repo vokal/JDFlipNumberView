@@ -111,35 +111,6 @@
     }
 }
 
-- (void)viewPanned:(UIPanGestureRecognizer*)panner
-{
-    JDFlipImageView *flipImageView = (JDFlipImageView*)self.flipView;
-
-    if (panner.state == UIGestureRecognizerStateBegan) {
-
-        CGFloat velocity = [panner velocityInView:panner.view].y;
-        if (velocity > 0) {
-            [flipImageView prepareForManualSlideDirection:JDFlipImageViewFlipDirectionDown completion:^(BOOL finished) {
-                self.imageIndex = (self.imageIndex+1)%3;
-                [flipImageView setImage:[UIImage imageNamed:[NSString stringWithFormat: @"example%02ld.jpg", (long)self.imageIndex+1]]];
-            }];
-        } else {
-            [flipImageView prepareForManualSlideDirection:JDFlipImageViewFlipDirectionUp completion:^(BOOL finished) {
-                self.imageIndex = (self.imageIndex+1)%3;
-                [flipImageView setImage:[UIImage imageNamed:[NSString stringWithFormat: @"example%02ld.jpg", (long)self.imageIndex+1]]];
-            }];
-        }
-
-    } else {
-        CGFloat progress = [panner translationInView:panner.view].y / CGRectGetHeight(panner.view.frame);
-        if (panner.state == UIGestureRecognizerStateEnded && progress < 0.5) {
-            [flipImageView slideToProgress:0.0];
-        } else {
-            [flipImageView slideToProgress:progress];
-        }
-    }
-}
-
 - (void)showSingleDigit;
 {
     JDFlipNumberView *flipView = [[JDFlipNumberView alloc] initWithDigitCount:1 imageBundleName:self.imageBundleName];

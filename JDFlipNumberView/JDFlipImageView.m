@@ -12,6 +12,7 @@
 #import "JDFlipImageView.h"
 
 const NSTimeInterval JDFlipImageViewDefaultFlipDuration = 0.66;
+const CGFloat JDFlipImageViewMaxSlideAngle = 0.8;
 static NSString *const JDFlipImageAnimationKey = @"JDFlipImageAnimationKey";
 
 typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
@@ -242,7 +243,7 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
         return;
     }
 
-    if (progress > 0.8) {
+    if (progress > JDFlipImageViewMaxSlideAngle) {
         self.animationState = JDFlipAnimationStateSecondHalf;
         [self runAnimation];
         return;

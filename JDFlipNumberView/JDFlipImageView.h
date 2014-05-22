@@ -10,6 +10,8 @@
 
 extern const NSTimeInterval JDFlipImageViewDefaultFlipDuration;
 
+extern const CGFloat JDFlipImageViewMaxSlideAngle;
+
 typedef void(^JDFlipImageViewCompletionBlock)(BOOL finished);
 
 typedef NS_ENUM(NSInteger, JDFlipImageViewFlipDirection) {

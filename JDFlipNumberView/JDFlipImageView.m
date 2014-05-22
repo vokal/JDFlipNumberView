@@ -217,7 +217,7 @@ typedef NS_OPTIONS(NSUInteger, JDFlipAnimationState) {
                              nextImage:(UIImage *)nextImage
                             completion:(JDFlipImageViewCompletionBlock)completion;
 {
-//    _image = nextImage;
+    self.nextImages = [[JDFlipNumberViewImageFactory sharedInstance] generateImagesFromImage:nextImage];
 
     self.animationState = JDFlipAnimationStateManualSlide;
     self.flipDirection = direction;
